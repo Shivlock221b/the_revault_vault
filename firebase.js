@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+require('dotenv').config();
 
 /*
  * Initialize the Firebase Admin SDK. The SDK requires service account
@@ -10,31 +11,22 @@ const admin = require('firebase-admin');
  * https://firebase.google.com/docs/admin/setup
  */
 function initializeFirebase() {
-  if (admin.apps.length > 0) {
-    return admin.app();
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        type: process.env.FIREBASE_TYPE,
+        project_id: process.env.FIREBASE_PROJECT_ID,
+        private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+        private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        client_email: process.env.FIREBASE_CLIENT_EMAIL,
+        client_id: process.env.FIREBASE_CLIENT_ID,
+        auth_uri: process.env.FIREBASE_AUTH_URI,
+        token_uri: process.env.FIREBASE_TOKEN_URI,
+        auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_CERT_URL,
+        client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
+      }),
+    });
   }
-
-  let serviceAccount;
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    serviceAccount = require(process.env.FIREBASE_SERVICE_ACCOUNT);
-  } else {
-    // Fallback to a local file named serviceAccountKey.json. This file should
-    // not be committed to source control. Add it to your .gitignore.
-    try {
-      serviceAccount = require('./serviceAccountKey.json');
-    } catch (err) {
-      throw new Error(
-        'Firebase service account credentials not found. Provide a JSON key via the FIREBASE_SERVICE_ACCOUNT environment variable or place serviceAccountKey.json in the web directory.'
-      );
-    }
-  }
-
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    // If using the Realtime Database, specify the URL here. For Firestore
-    // it's not required.
-    databaseURL: process.env.FIREBASE_DATABASE_URL,
-  });
   return admin.app();
 }
 
