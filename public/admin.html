@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Gold Admin</title>
+    <!-- Tailwind CSS for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for simple charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
+      <h1 class="text-lg font-bold">Digital Gold Admin Dashboard</h1>
+      <div class="flex space-x-4">
+        <button class="nav-btn" data-target="users-section">Users</button>
+        <button class="nav-btn" data-target="shops-section">Shops</button>
+        <button class="nav-btn" data-target="orders-section">Orders</button>
+        <button class="nav-btn" data-target="redemptions-section">Redemptions</button>
+        <button class="nav-btn" data-target="price-section">Gold Price</button>
+        <button class="nav-btn" data-target="charts-section">Charts</button>
+        <button class="nav-btn" data-target="queries-section">Queries</button>
+      </div>
+    </nav>
+    <main id="content" class="p-4 max-w-6xl mx-auto">
+      <!-- USERS SECTION -->
+      <section id="users-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Users</h2>
+        <div class="mb-4 p-4 bg-white rounded shadow">
+          <h3 class="font-semibold mb-2">Add / Edit User</h3>
+          <form id="user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label for="user-email" class="block text-sm font-medium">Email</label>
+              <input id="user-email" type="email" class="mt-1 p-2 border rounded w-full" required />
+            </div>
+            <div>
+              <label for="user-name" class="block text-sm font-medium">Display Name</label>
+              <input id="user-name" type="text" class="mt-1 p-2 border rounded w-full" />
+            </div>
+            <div class="flex items-end">
+              <button id="user-save" type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+            </div>
+          </form>
+        </div>
+        <div class="bg-white p-4 rounded shadow overflow-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="py-2 px-4 text-left">Email</th>
+                <th class="py-2 px-4 text-left">Name</th>
+                <th class="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table" class="text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- SHOPS SECTION -->
+      <section id="shops-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Shops</h2>
+        <div class="mb-4 p-4 bg-white rounded shadow">
+          <h3 class="font-semibold mb-2">Add / Edit Shop</h3>
+          <form id="shop-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <input id="shop-id" type="hidden" />
+            <div>
+              <label class="block text-sm font-medium" for="shop-name">Name</label>
+              <input id="shop-name" class="mt-1 p-2 border rounded w-full" required />
+            </div>
+            <div>
+              <label class="block text-sm font-medium" for="shop-shopId">Shopify Shop ID</label>
+              <input id="shop-shopId" class="mt-1 p-2 border rounded w-full" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium" for="shop-url">URL</label>
+              <input id="shop-url" class="mt-1 p-2 border rounded w-full" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium" for="shop-image">Image URL</label>
+              <input id="shop-image" class="mt-1 p-2 border rounded w-full" />
+            </div>
+            <div class="flex items-end">
+              <button id="shop-save" type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+            </div>
+          </form>
+        </div>
+        <div class="bg-white p-4 rounded shadow overflow-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="py-2 px-4 text-left">Name</th>
+                <th class="py-2 px-4 text-left">Shop ID</th>
+                <th class="py-2 px-4 text-left">URL</th>
+                <th class="py-2 px-4 text-left">Total Distributed (g)</th>
+                <th class="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="shops-table" class="text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- ORDERS SECTION -->
+      <section id="orders-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Orders</h2>
+        <div class="mb-4 flex space-x-4">
+          <input id="order-filter-email" type="email" placeholder="Filter by user email" class="p-2 border rounded w-64" />
+          <button id="order-filter-btn" class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
+          <button id="order-refresh-btn" class="bg-gray-600 text-white px-4 py-2 rounded">Refresh</button>
+        </div>
+        <div class="bg-white p-4 rounded shadow overflow-auto max-h-96">
+          <table class="min-w-full">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="py-2 px-4 text-left">Date</th>
+                <th class="py-2 px-4 text-left">Order ID</th>
+                <th class="py-2 px-4 text-left">User</th>
+                <th class="py-2 px-4 text-left">Total (₹)</th>
+                <th class="py-2 px-4 text-left">Gold (g)</th>
+                <th class="py-2 px-4 text-left">Status</th>
+                <th class="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-admin" class="text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- REDEMPTIONS SECTION -->
+      <section id="redemptions-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Redemption Requests</h2>
+        <div class="bg-white p-4 rounded shadow overflow-auto max-h-96">
+          <table class="min-w-full">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="py-2 px-4 text-left">Date</th>
+                <th class="py-2 px-4 text-left">User</th>
+                <th class="py-2 px-4 text-left">Grams</th>
+                <th class="py-2 px-4 text-left">Amount (₹)</th>
+                <th class="py-2 px-4 text-left">Status</th>
+                <th class="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="redemptions-table" class="text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- GOLD PRICE SECTION -->
+      <section id="price-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Gold Price</h2>
+        <div class="bg-white p-4 rounded shadow">
+          <p class="mb-2">Current price per gram: <span id="current-price">0</span> ₹</p>
+          <form id="price-form" class="flex space-x-4 items-end">
+            <div>
+              <label class="block text-sm font-medium" for="new-price">New price (₹/g)</label>
+              <input id="new-price" type="number" min="0" step="0.01" class="mt-1 p-2 border rounded" required />
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update Price</button>
+          </form>
+        </div>
+      </section>
+      <!-- CHARTS SECTION -->
+      <section id="charts-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Analytics</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-semibold mb-2">Orders by Day (last 14 days)</h3>
+            <canvas id="chart-daily" height="200"></canvas>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-semibold mb-2">Gold Distributed by Month</h3>
+            <canvas id="chart-monthly" height="200"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUERIES SECTION -->
+      <section id="queries-section" class="hidden">
+        <h2 class="text-2xl font-bold mb-4">Contact Queries</h2>
+        <div class="bg-white p-4 rounded shadow overflow-auto max-h-96">
+          <table class="min-w-full">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="py-2 px-4 text-left">Date</th>
+                <th class="py-2 px-4 text-left">Name</th>
+                <th class="py-2 px-4 text-left">Brand</th>
+                <th class="py-2 px-4 text-left">Email</th>
+                <th class="py-2 px-4 text-left">Website</th>
+                <th class="py-2 px-4 text-left">Message</th>
+              </tr>
+            </thead>
+            <tbody id="queries-table" class="text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script>
+      // Utility: show only selected section
+      function showSection(id) {
+        document.querySelectorAll('main > section').forEach((sec) => {
+          if (sec.id === id) sec.classList.remove('hidden'); else sec.classList.add('hidden');
+        });
+      }
+      // Attach click listeners to nav buttons
+      document.querySelectorAll('.nav-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-target');
+          showSection(target);
+          // Load data for the section
+          if (target === 'users-section') loadUsers();
+          if (target === 'shops-section') loadShops();
+          if (target === 'orders-section') loadOrders();
+          if (target === 'redemptions-section') loadRedemptions();
+          if (target === 'price-section') loadPrice();
+          if (target === 'charts-section') loadCharts();
+          if (target === 'queries-section') loadQueries();
+        });
+      });
+      // Helper to build table rows with action buttons
+      const appHost = '';
+      /* USERS */
+      async function loadUsers() {
+        try {
+          const res = await fetch(appHost + '/api/users');
+          const users = await res.json();
+          const tbody = document.getElementById('users-table');
+          tbody.innerHTML = '';
+          users.forEach((user) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="py-2 px-4">${user.email}</td>
+              <td class="py-2 px-4">${user.displayName || ''}</td>
+              <td class="py-2 px-4 space-x-2">
+                <button class="text-blue-600 underline" onclick="editUser('${user.email}', '${user.displayName || ''}')">Edit</button>
+                <button class="text-red-600 underline" onclick="deleteUser('${user.email}')">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      document.getElementById('user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('user-email').value;
+        const displayName = document.getElementById('user-name').value;
+        try {
+          await fetch(appHost + '/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, displayName }),
+          });
+          document.getElementById('user-email').value = '';
+          document.getElementById('user-name').value = '';
+          await loadUsers();
+        } catch (err) {
+          console.error(err);
+        }
+      });
+      window.editUser = function(email, name) {
+        document.getElementById('user-email').value = email;
+        document.getElementById('user-name').value = name;
+      };
+      window.deleteUser = async function(email) {
+        if (!confirm('Delete user ' + email + '?')) return;
+        await fetch(appHost + '/api/users/' + encodeURIComponent(email), { method: 'DELETE' });
+        await loadUsers();
+      };
+      /* SHOPS */
+      async function loadShops() {
+        try {
+          const res = await fetch(appHost + '/api/shops');
+          const shops = await res.json();
+          const tbody = document.getElementById('shops-table');
+          tbody.innerHTML = '';
+          shops.forEach((shop) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="py-2 px-4">${shop.name}</td>
+              <td class="py-2 px-4">${shop.shopId || ''}</td>
+              <td class="py-2 px-4"><a href="${shop.url || '#'}" class="text-blue-600 underline" target="_blank">${shop.url ? 'Link' : ''}</a></td>
+              <td class="py-2 px-4">${shop.totalDistributed ? shop.totalDistributed.toFixed(4) : ''}</td>
+              <td class="py-2 px-4 space-x-2">
+                <button class="text-blue-600 underline" onclick="editShop('${shop.id}', '${shop.name}', '${shop.shopId || ''}', '${shop.url || ''}', '${shop.image || ''}')">Edit</button>
+                <button class="text-red-600 underline" onclick="deleteShop('${shop.id}')">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      document.getElementById('shop-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('shop-id').value;
+        const name = document.getElementById('shop-name').value;
+        const shopIdVal = document.getElementById('shop-shopId').value;
+        const url = document.getElementById('shop-url').value;
+        const image = document.getElementById('shop-image').value;
+        const payload = { name, shopId: shopIdVal || undefined, url: url || undefined, image: image || undefined };
+        try {
+          if (id) {
+            await fetch(appHost + '/api/shops/' + id, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+          } else {
+            await fetch(appHost + '/api/shops', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+          }
+          document.getElementById('shop-id').value = '';
+          document.getElementById('shop-name').value = '';
+          document.getElementById('shop-shopId').value = '';
+          document.getElementById('shop-url').value = '';
+          document.getElementById('shop-image').value = '';
+          await loadShops();
+        } catch (err) {
+          console.error(err);
+        }
+      });
+      window.editShop = function(id, name, shopIdVal, url, image) {
+        document.getElementById('shop-id').value = id;
+        document.getElementById('shop-name').value = name;
+        document.getElementById('shop-shopId').value = shopIdVal;
+        document.getElementById('shop-url').value = url;
+        document.getElementById('shop-image').value = image;
+      };
+      window.deleteShop = async function(id) {
+        if (!confirm('Delete shop?')) return;
+        await fetch(appHost + '/api/shops/' + id, { method: 'DELETE' });
+        await loadShops();
+      };
+      /* ORDERS */
+      async function loadOrders(emailFilter) {
+        try {
+          let url = appHost + '/api/orders';
+          if (emailFilter) url += '?email=' + encodeURIComponent(emailFilter);
+          const res = await fetch(url);
+          const orders = await res.json();
+          const tbody = document.getElementById('orders-table-admin');
+          tbody.innerHTML = '';
+          orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          orders.forEach((order) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="py-2 px-4">${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : ''}</td>
+              <td class="py-2 px-4">${order.orderNumber || order.orderId}</td>
+              <td class="py-2 px-4">${order.userEmail || ''}</td>
+              <td class="py-2 px-4">${order.purchaseTotal ? order.purchaseTotal.toFixed(2) : ''}</td>
+              <td class="py-2 px-4">${order.rewardGrams ? order.rewardGrams.toFixed(4) : ''}</td>
+              <td class="py-2 px-4">${order.status || ''}</td>
+              <td class="py-2 px-4 space-x-2">
+                <button class="text-blue-600 underline" onclick="editOrder('${order.id}', '${order.purchaseTotal}', '${order.status || ''}')">Edit</button>
+                <button class="text-red-600 underline" onclick="deleteOrder('${order.id}')">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      document.getElementById('order-filter-btn').addEventListener('click', () => {
+        const email = document.getElementById('order-filter-email').value;
+        loadOrders(email);
+      });
+      document.getElementById('order-refresh-btn').addEventListener('click', () => {
+        document.getElementById('order-filter-email').value = '';
+        loadOrders();
+      });
+      window.editOrder = function(id, purchaseTotal, status) {
+        const newTotal = prompt('Enter new purchase total (leave blank to keep same):', purchaseTotal);
+        const newStatus = prompt('Enter new status (pending/fulfilled/returned/etc):', status);
+        const updates = {};
+        if (newTotal) updates.totalPrice = parseFloat(newTotal);
+        if (newStatus) updates.status = newStatus;
+        fetch(appHost + '/api/orders/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        }).then(() => loadOrders());
+      };
+      window.deleteOrder = async function(id) {
+        if (!confirm('Delete order?')) return;
+        await fetch(appHost + '/api/orders/' + id, { method: 'DELETE' });
+        await loadOrders();
+      };
+      /* REDEMPTIONS */
+      async function loadRedemptions() {
+        try {
+          const res = await fetch(appHost + '/api/redemptions');
+          const redemptions = await res.json();
+          const tbody = document.getElementById('redemptions-table');
+          tbody.innerHTML = '';
+          redemptions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          redemptions.forEach((r) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="py-2 px-4">${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</td>
+              <td class="py-2 px-4">${r.email}</td>
+              <td class="py-2 px-4">${r.grams.toFixed(4)}</td>
+              <td class="py-2 px-4">${r.amount.toFixed(2)}</td>
+              <td class="py-2 px-4">${r.status}</td>
+              <td class="py-2 px-4">
+                ${r.status === 'pending' ? '<button class="text-green-600 underline" onclick="approveRedemption(\'' + r.id + '\')">Approve</button>' : ''}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      window.approveRedemption = function(id) {
+        if (!confirm('Approve this redemption?')) return;
+        fetch(appHost + '/api/redemptions/' + id + '/approve', { method: 'PUT' }).then(() => loadRedemptions());
+      };
+      /* GOLD PRICE */
+      async function loadPrice() {
+        try {
+          const res = await fetch(appHost + '/api/goldprice');
+          const data = await res.json();
+          document.getElementById('current-price').textContent = data.price.toFixed(2);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      document.getElementById('price-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const price = parseFloat(document.getElementById('new-price').value);
+        if (price <= 0) return;
+        await fetch(appHost + '/api/goldprice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ price }),
+        });
+        document.getElementById('new-price').value = '';
+        await loadPrice();
+      });
+
+      /* QUERIES */
+      async function loadQueries() {
+        try {
+          const res = await fetch(appHost + '/api/queries');
+          const queries = await res.json();
+          const tbody = document.getElementById('queries-table');
+          tbody.innerHTML = '';
+          queries.forEach((q) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="py-2 px-4">${q.createdAt ? new Date(q.createdAt).toLocaleDateString() : ''}</td>
+              <td class="py-2 px-4">${q.name || ''}</td>
+              <td class="py-2 px-4">${q.brand || ''}</td>
+              <td class="py-2 px-4">${q.email || ''}</td>
+              <td class="py-2 px-4">${q.website || ''}</td>
+              <td class="py-2 px-4">${q.message || ''}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      /* CHARTS */
+      let dailyChart, monthlyChart;
+      async function loadCharts() {
+        try {
+          // fetch all orders
+          const res = await fetch(appHost + '/api/orders');
+          const orders = await res.json();
+          // build daily counts for last 14 days
+          const now = new Date();
+          const dailyLabels = [];
+          const dailyCounts = [];
+          for (let i = 13; i >= 0; i--) {
+            const d = new Date(now);
+            d.setDate(now.getDate() - i);
+            const key = d.toLocaleDateString();
+            dailyLabels.push(key);
+            const ordersForDay = orders.filter((o) => {
+              return o.createdAt && new Date(o.createdAt).toLocaleDateString() === key;
+            });
+            dailyCounts.push(ordersForDay.length);
+          }
+          // monthly grams distributed
+          const monthlyMap = {};
+          orders.forEach((order) => {
+            if (order.createdAt) {
+              const d = new Date(order.createdAt);
+              const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+              if (!monthlyMap[key]) monthlyMap[key] = 0;
+              monthlyMap[key] += order.rewardGrams || 0;
+            }
+          });
+          const monthlyLabels = Object.keys(monthlyMap).sort();
+          const monthlyData = monthlyLabels.map((k) => monthlyMap[k]);
+          // Render charts
+          const ctxDaily = document.getElementById('chart-daily').getContext('2d');
+          if (dailyChart) dailyChart.destroy();
+          dailyChart = new Chart(ctxDaily, {
+            type: 'bar',
+            data: {
+              labels: dailyLabels,
+              datasets: [
+                { label: 'Orders', data: dailyCounts },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Number of Orders' } },
+                x: { title: { display: true, text: 'Date' } },
+              },
+            },
+          });
+          const ctxMonthly = document.getElementById('chart-monthly').getContext('2d');
+          if (monthlyChart) monthlyChart.destroy();
+          monthlyChart = new Chart(ctxMonthly, {
+            type: 'line',
+            data: {
+              labels: monthlyLabels,
+              datasets: [
+                { label: 'Gold Distributed (g)', data: monthlyData, fill: false },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Grams' } },
+                x: { title: { display: true, text: 'Month' } },
+              },
+            },
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      // Show default section on load
+      showSection('users-section');
+      loadUsers();
+    </script>
+  </body>
+</html>

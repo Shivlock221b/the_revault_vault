@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReVault – Revolutionize Your Brand's Loyalty</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-overlay">
+        <h1>Revolutionize Your Brand's Loyalty</h1>
+        <p>
+          At Re‑Vault, our mission is to empower brands to build stronger
+          customer relationships and drive repeat business through a one‑of‑a‑kind
+          digital gold rewards program.
+        </p>
+        <div class="cta-buttons">
+          <a href="#about" class="btn btn-primary">Learn More</a>
+          <a href="#contact" class="btn btn-secondary">Contact Us</a>
+        </div>
+      </div>
+    </section>
+    <!-- About Section -->
+    <section id="about" class="section dark-section">
+      <div class="container">
+        <h2>About Us</h2>
+        <p>
+          ReVault is a loyalty solution for modern brands. We help businesses
+          reward their customers with <strong>real digital gold</strong>, not just points
+          or discounts. By turning every purchase into a potential investment, we
+          make loyalty meaningful and long‑term. Whether you're a D2C brand or
+          an e‑commerce store, ReVault plugs in seamlessly and helps you win
+          trust, repeat purchases, and advocacy.
+        </p>
+      </div>
+    </section>
+    <!-- Mission Section -->
+    <section id="mission" class="section light-section">
+      <div class="container">
+        <h2>Our Mission</h2>
+        <p>
+          To make loyalty valuable again. We want to change the way brands
+          engage with their customers by helping them retain customers with
+          value‑driven incentives, build emotional and financial ties through
+          digital gold, and turn everyday purchases into long‑term assets.
+        </p>
+      </div>
+    </section>
+    <!-- Services Section -->
+    <section id="services" class="section dark-section">
+      <div class="container">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <h3>Plug & Play Extension</h3>
+            <p>
+              Connect your store in minutes and start rewarding customers with
+              digital gold.
+            </p>
+          </div>
+          <div class="service-card">
+            <h3>Customizable Rules</h3>
+            <p>
+              Decide how much gold to give per order. Track orders, gold 
+              distributed and redemption stats.
+            </p>
+          </div>
+          <div class="service-card">
+            <h3>Customer Dashboard</h3>
+            <p>
+              Your customers get a personal gold wallet to track earnings,
+              gold prices, and redemption options. 
+            </p>
+          </div>
+          <div class="service-card">
+            <h3>Brand Visibility</h3>
+            <p>
+              Featured brands get a permanent spot on our user dashboard — 
+              increasing recall and driving repeat purchases from loyal, 
+              high-intent customers.
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    <!-- Benefits Section -->
+    <section id="benefits" class="section light-section">
+      <div class="container">
+        <h2>How Digital Gold Rewards Benefit Your Brand</h2>
+        <ul class="benefits-list">
+          <li><strong>Real Value:</strong> Digital gold is a tangible asset that grows over time.</li>
+          <li><strong>Long‑Term Engagement:</strong> Customers return to accumulate more gold.</li>
+          <li><strong>Emotional Connect:</strong> Gold holds emotional value and builds trust.</li>
+          <li><strong>Viral Word‑of‑Mouth:</strong> Unique rewards create buzz and advocacy.</li>
+          <li><strong>High Recall Value:</strong> Customers remember gold more than discounts.</li>
+        </ul>
+      </div>
+    </section>
+    <!-- Coming Soon Section -->
+    <section id="coming-soon" class="section dark-section coming-soon">
+      <div class="container">
+        <h2>Coming Soon</h2>
+        <p>
+          We are launching an all‑in‑one dashboard and mobile experience soon.
+          Track gold, manage redemptions, view partner brands, and more. Stay
+          tuned!
+        </p>
+      </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="section light-section contact-section">
+      <div class="container">
+          <h2>Contact Us</h2>
+          <p>Want to partner with us? Let’s talk.</p>
+          <form class="contact-form">
+            <div class="form-row">
+              <input type="text" name="name" placeholder="Your Name" required />
+              <input type="text" name="brand" placeholder="Brand Name" required />
+            </div>
+            <div class="form-row">
+              <input type="email" name="email" placeholder="Email" required />
+              <input type="text" name="website" placeholder="Website (optional)" />
+            </div>
+            <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          <div class="contact-info">
+            <p>Email: <a href="mailto:contact@revault.app">hi@revault.app</a></p>
+            <p>Phone: +91‑8766239058</p>
+          </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-content">
+        <p>© 2025 ReVault</p>
+        <nav class="footer-nav">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+          <!-- <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a> -->
+        </nav>
+      </div>
+    </footer>
+    <!-- Form Submission Script -->
+    <script>
+      // Attach a submission handler to the contact form. When the user
+      // submits the form, the data is sent to our backend via a POST
+      // request. If the request succeeds, the form is cleared and the user
+      // is notified. Errors are logged and communicated via alerts.
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.contact-form');
+        if (!form) return;
+        form.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const data = {
+            name: form.elements['name'].value,
+            brand: form.elements['brand'].value,
+            email: form.elements['email'].value,
+            website: form.elements['website'].value,
+            message: form.elements['message'].value,
+          };
+          try {
+            const response = await fetch('/api/queries', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
+            if (response.ok) {
+              alert('Thank you! Your message has been sent.');
+              form.reset();
+            } else {
+              alert('Sorry, there was an error sending your message. Please try again later.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Error sending message. Please try again later.');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
